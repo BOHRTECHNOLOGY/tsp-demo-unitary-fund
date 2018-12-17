@@ -1,0 +1,47 @@
+.Marker {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    margin-top: -20px;
+    margin-left: -10px;
+    opacity: 0.9;
+}
+
+.Marker--isHovered {
+    width: 40px;
+    height: 40px;
+    margin-left: -20px;
+    margin-top: -40px
+}
+
+.MarkerPopup {
+    background: white;
+    position: absolute;
+    margin-left: -70px;
+    margin-top: -85px;
+    z-index: 999;
+    padding: 5px
+}
+
+.MarkerPopup-Title {
+    font-size: 1.2em;
+    font-weight: bold;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.MarkerPopup-Description {
+    font-size: 0.9em;
+    white-space: nowrap;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.RouteIndex {
+    color: #ff1500;
+    font-size: 1.5em;
+    position: absolute;
+    margin-left: -5px;
+    margin-top: 2px;
+    z-index: 999;
+}

@@ -1,0 +1,22 @@
+{
+  "name": "unitary-fund-web-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "google-map-react": "^1.0.6",
+    "react": "^16.4.2",
+    "react-datetime": "^2.15.0",
+    "react-dom": "^16.4.2",
+    "react-redux": "^5.0.7",
+    "react-scripts": "1.1.4",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0",
+    "superagent": "^3.8.3"
+  },
+  "scripts": {
+    "start:development": "react-scripts start",
+    "build": "react-scripts build",
+    "heroku-postbuild": "npm run build"
+  },
+  "devDependencies": {}
+}
