@@ -5,6 +5,8 @@ import {connect} from 'react-redux'
 import {GOOGLE_MAPS_API_KEY} from '../../config/config';
 import Marker from '../Marker/Marker';
 import {registerGoogleMaps} from '../../services/googleMaps';
+import {getPointsList} from '../../reducers/mapReducer';
+import {mapActions} from '../../reducers/mapActions';
 
 class Map extends Component {
     static defaultProps = {
@@ -35,7 +37,7 @@ class Map extends Component {
             }
 
             if (solutionRoute) {
-                const pathCoordinates = newProps.solutionRoute.map(index => this.props.dataPoints[index])
+                const pathCoordinates = newProps.solutionRoute.map(index => this.props.pointsById[index])
                     .map(({lat, lng}) => ({lat, lng}));
 
                 const path = new this.state.maps.Polyline({
@@ -63,10 +65,10 @@ class Map extends Component {
                     onGoogleApiLoaded={({map, maps}) => this.apiIsLoaded(map, maps)}
                 >
                     {
-                        this.props.dataPoints.map((point, index) => (
+                        this.props.pointsList.map((point) => (
                             <Marker {...point}
-                                    index={index}
-                                    key={`${point.label}.${point.popup}.${point.lat}.${point.lng}`}
+                                    key={point.id}
+                                    toggle={() => this.props.togglePoint(point.id)}
                             />))
                     }
 
@@ -78,8 +80,11 @@ class Map extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    dataPoints: state.map.dataPoints,
-    solutionRoute: state.map.solutionRoute,
+    pointsList: getPointsList(state.map),
 });
 
-export default connect(mapStateToProps)(Map);
+const mapDispatchToProps = (dispatch) => ({
+    togglePoint: id => dispatch(mapActions.togglePoint(id))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Map);

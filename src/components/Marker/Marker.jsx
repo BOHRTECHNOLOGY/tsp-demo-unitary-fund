@@ -1,65 +1,45 @@
 import React from 'react';
-import {connect} from 'react-redux'
-import {toggleSelectPoint} from '../../reducers/mapActions';
+import PropTypes from 'prop-types'
+
+import {composeClasses} from '../../composeClasses';
+
+import startIcon from './start.svg';
+import finishIcon from './finish.svg';
 
 import './marker.css';
 
-import marker from './marker.svg';
-import markerSelected from './marker_selected.svg';
-import markerStart from './marker_start.svg';
-import markerEnd from './marker_end.svg';
-import {composeClasses} from '../../composeClasses';
-
-const Popup = ({popup, label}) => (
-    <div className="MarkerPopup">
-        <p className="MarkerPopup-Title">{label}</p>
-        <p className="MarkerPopup-Description">{popup}</p>
-    </div>
-);
-
-const RouteIndex = ({index}) => (
-    <div className="RouteIndex">
-        {index}
-    </div>
-);
-
-const Marker = ({label, popup, selected, toggle, $hover, solutionIndex, hovered, isStart, isEnd}) => {
-    const isHovered = $hover || hovered;
-
-    let markerIcon = marker;
-    if (isStart) {
-        markerIcon = markerStart;
-    } else if (isEnd) {
-        markerIcon = markerEnd
-    } else if (selected) {
-        markerIcon = markerSelected;
+const Marker = ({selected, toggle, isStart, isEnd}) => {
+    if (isStart || isEnd) {
+        const icon = isStart ? startIcon : finishIcon;
+        return (
+            <img
+                src={icon}
+                alt=""
+                onClick={toggle}
+                className="MarkerIcon"
+            />
+        )
     }
 
     return (
-        <div onClick={toggle}>
-            <div className={composeClasses(['Marker', isHovered && 'Marker--isHovered'])}>
-                <img src={markerIcon} alt=""/>
-            </div>
-
-            {isHovered && <Popup popup={popup} label={label}/>}
-
-            {!!solutionIndex && <RouteIndex index={solutionIndex}/>}
-        </div>
+        <div
+            onClick={toggle}
+            className={composeClasses(['Marker', selected && 'isSelected'])}
+        />
     )
 };
 
-const mapStateToProps = (store, ownProps) => ({
-    selected: !!store.map.selected[ownProps.index],
-    popup: store.map.dataPoints[ownProps.index].popup,
-    label: store.map.dataPoints[ownProps.index].label,
-    isStart: store.map.startPoint === ownProps.index,
-    isEnd: store.map.endPoint === ownProps.index,
-    solutionIndex: store.map.solutionRoute && store.map.solutionRoute.indexOf(ownProps.index) + 1,
-    hovered: store.map.hoverPoint === ownProps.index
-});
+Marker.propTypes = {
+    selected: PropTypes.bool,
+    toggle: PropTypes.func.isRequired,
+    isStart: PropTypes.bool,
+    isEnd: PropTypes.bool,
+};
 
-const mapDispatchToProps = (dispatch, {index}) => ({
-    toggle: () => dispatch(toggleSelectPoint(index))
-});
+Marker.defaultProps = {
+    isEnd: false,
+    isStart: false,
+    selected: false
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Marker)
+export default Marker

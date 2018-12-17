@@ -1,20 +1,17 @@
 import React from 'react';
-import {connect} from 'react-redux'
 
 import Map from '../components/Map/Map';
 
 import './SolverPage.css';
+import FindRouteButton from '../components/FindRouteButton/FindRouteButton';
 
-const SolverPage = ({computationStatus}) => (
+const SolverPage = () => (
     <div className="container">
         <div className="MapsBox">
             <Map/>
         </div>
+        <FindRouteButton/>
     </div>
 );
 
-const mapStateToProps = (state) => ({
-    computationStatus: state.map.computationStatus
-});
-
-export default connect(mapStateToProps)(SolverPage)
+export default SolverPage
