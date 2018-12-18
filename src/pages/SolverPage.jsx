@@ -1,16 +1,20 @@
 import React from 'react';
 
 import Map from '../components/Map/Map';
+import FindRouteButton from '../components/FindRouteButton/FindRouteButton';
 
 import './SolverPage.css';
-import FindRouteButton from '../components/FindRouteButton/FindRouteButton';
 
 const SolverPage = () => (
     <div className="container">
-        <div className="MapsBox">
-            <Map/>
+        <div className="Column">
+            <div className="MapsBox">
+                <Map/>
+            </div>
+            <div className="ButtonContainer">
+                <FindRouteButton/>
+            </div>
         </div>
-        <FindRouteButton/>
     </div>
 );
 

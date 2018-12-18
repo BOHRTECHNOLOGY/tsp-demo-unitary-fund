@@ -1,14 +1,36 @@
 import React, {Component} from 'react';
 import GoogleMapReact from 'google-map-react';
 import {connect} from 'react-redux'
+import PropTypes from 'prop-types'
 
 import {GOOGLE_MAPS_API_KEY} from '../../config/config';
 import Marker from '../Marker/Marker';
 import {registerGoogleMaps} from '../../services/googleMaps';
-import {getPointsList} from '../../reducers/mapReducer';
+import {getPointsList, getSolutionRoute} from '../../reducers/mapReducer';
 import {mapActions} from '../../reducers/mapActions';
 
+import './Map.css';
+
+const InProgressOverlay = () => (
+    <div className="InProgressOverlay">
+        Finding solution in progress
+    </div>
+);
+
+const shapeOfPoint = PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    lat: PropTypes.number.isRequired,
+    lng: PropTypes.number.isRequired,
+});
+
 class Map extends Component {
+    static propTypes = {
+        pointsList: PropTypes.arrayOf(shapeOfPoint).isRequired,
+        findingSolutionInProgress: PropTypes.bool,
+        solutionRoute: PropTypes.arrayOf(shapeOfPoint),
+        togglePoint: PropTypes.func.isRequired,
+    };
+
     static defaultProps = {
         center: {
             // Warsaw's position
@@ -29,16 +51,15 @@ class Map extends Component {
     }
 
     componentWillReceiveProps(newProps, oldProps) {
-        const oldSolutionRoute = oldProps.solutionRoute && oldProps.solutionRoute.join('');
-        const solutionRoute = newProps.solutionRoute && newProps.solutionRoute.join('');
+        const oldSolutionRoute = oldProps.solutionRoute && oldProps.solutionRoute.map(({id}) => id).join('');
+        const solutionRoute = newProps.solutionRoute && newProps.solutionRoute.map(({id}) => id).join('');
         if (solutionRoute !== oldSolutionRoute) {
             if (this.state.path) {
                 this.state.path.setMap(null);
             }
 
             if (solutionRoute) {
-                const pathCoordinates = newProps.solutionRoute.map(index => this.props.pointsById[index])
-                    .map(({lat, lng}) => ({lat, lng}));
+                const pathCoordinates = newProps.solutionRoute.map(({lat, lng}) => ({lat, lng}));
 
                 const path = new this.state.maps.Polyline({
                     path: pathCoordinates,
@@ -56,7 +77,8 @@ class Map extends Component {
 
     render() {
         return (
-            <div style={{height: '100%'}}>
+            <div className="Map">
+                {this.props.findingSolutionInProgress && <InProgressOverlay/>}
                 <GoogleMapReact
                     bootstrapURLKeys={{key: GOOGLE_MAPS_API_KEY}}
                     defaultCenter={this.props.center}
@@ -81,6 +103,8 @@ class Map extends Component {
 
 const mapStateToProps = (state) => ({
     pointsList: getPointsList(state.map),
+    solutionRoute: getSolutionRoute(state.map),
+    findingSolutionInProgress: state.map.findingSolutionInProgress,
 });
 
 const mapDispatchToProps = (dispatch) => ({

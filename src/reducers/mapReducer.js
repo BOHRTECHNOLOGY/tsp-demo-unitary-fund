@@ -8,13 +8,19 @@ const MAP_POINTS_BY_ID = rawPoints.reduce((previous, point, id) => ({...previous
 
 export const defaultState = {
     pointsById: MAP_POINTS_BY_ID,
-    selected: []
+    selected: [],
+    findingSolutionInProgress: false,
+    solution: null,
 };
 
 const mapReducer = (state = defaultState, action) => {
     switch (action.type) {
         case MAP_ACTION_TYPES.POINT_TOGGLE:
-            if (state.selected.includes(action.id)) {
+            if (isSolutionLocked(state)) {
+                return state;
+            }
+
+            if (isPointSelected(state, action.id)) {
                 return {
                     ...state,
                     selected: state.selected.filter(element => element !== action.id)
@@ -30,8 +36,26 @@ const mapReducer = (state = defaultState, action) => {
                 selected: state.selected.concat(action.id)
             };
 
+        case MAP_ACTION_TYPES.COMPUTE_START:
+            return {
+                ...state,
+                findingSolutionInProgress: true,
+                solution: null,
+            };
+
+        case MAP_ACTION_TYPES.COMPUTE_SUCCESS:
+            return {
+                ...state,
+                findingSolutionInProgress: false,
+                solution: action.solution,
+            };
+
+        case MAP_ACTION_TYPES.RESET:
+            return defaultState;
+
         default:
             return state;
+
     }
 };
 
@@ -40,10 +64,18 @@ export default mapReducer
 export const getPointsList = state => Object.values(state.pointsById)
     .map(point => ({
             ...point,
-            selected: state.selected.includes(point.id),
+            selected: isPointSelected(state, point.id),
             isStart: state.selected[0] === point.id,
             isEnd: state.selected.length > 1 && state.selected[state.selected.length - 1] === point.id,
         }
     ));
 
 export const isReadyToCompute = state => state.selected.length >= MIN_SELECTED_POINTS_COUNT;
+
+export const isPointSelected = (state, pointId) => state.selected.includes(pointId);
+
+export const isSolutionLocked = state => state.findingSolutionInProgress || state.solution;
+
+export const getSelectedPoints = state => state.selected.map(id => state.pointsById[id]);
+
+export const getSolutionRoute = state => state.solution && state.solution.map(id => state.pointsById[id]);
