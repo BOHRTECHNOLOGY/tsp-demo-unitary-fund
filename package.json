@@ -19,5 +19,10 @@
     "build": "react-scripts build",
     "heroku-postbuild": "npm run build"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "proxy": {
+    "/tsp/*": {
+      "target": "http://localhost:5000"
+    }
+  }
 }

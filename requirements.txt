@@ -2,4 +2,4 @@ falcon
 numpy
 gunicorn
 geopy
-dwave_qbsolv
+dwave_qbsolv==0.2.9

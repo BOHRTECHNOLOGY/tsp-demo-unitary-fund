@@ -1,1 +1,1 @@
-web: gunicorn server.web:api -b 0.0.0.0:$PORT
+web: gunicorn tsp.web:api -b 0.0.0.0:$PORT

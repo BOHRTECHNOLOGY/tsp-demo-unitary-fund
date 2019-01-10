@@ -5,8 +5,8 @@ import numpy
 import os
 from tsp.solver import sample_from_distance_matrix
 
-# poczta:warszawa
-BASIC_AUTH_TOKEN = 'Basic cG9jenRhOndhcnN6YXdh'
+# unitary:web
+BASIC_AUTH_TOKEN = 'Basic dW5pdGFyeTp3ZWI='
 STATIC_DIRECTORY = os.path.abspath(os.path.join(os.getcwd(), './build'))
 INDEX_HTML = os.path.abspath(os.path.join(STATIC_DIRECTORY, './index.html'))
 
