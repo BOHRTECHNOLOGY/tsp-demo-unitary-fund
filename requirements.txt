@@ -1,0 +1,5 @@
+falcon
+numpy
+gunicorn
+geopy
+dwave_qbsolv
