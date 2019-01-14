@@ -4,20 +4,26 @@ import {connect} from 'react-redux'
 
 import {isReadyToCompute} from '../../reducers/mapReducer';
 import {mapActions} from '../../reducers/mapActions';
-import {composeClasses} from '../../composeClasses';
 
 import './FindRouteButton.css'
 
 const FindRouteButton = ({computeBlocked, computingInProgress, compute, reset, resetMode}) => {
     const disabled = resetMode ? computingInProgress : computeBlocked;
 
+    let buttonCopy = 'Find optimal route';
+    if (resetMode) {
+        buttonCopy = 'Reset'
+    } else if (disabled) {
+        buttonCopy = 'Select at least 4 points'
+    }
+
     return (
         <button
-            className={composeClasses(['FindRouteButton', disabled && 'isDisabled'])}
+            className={'button btn btn-primary btn-xl my-5'}
             disabled={disabled}
             onClick={resetMode ? reset : compute}
         >
-            {resetMode ? 'Reset' : 'Find Optimal Route'}
+            {buttonCopy}
         </button>
     )
 };

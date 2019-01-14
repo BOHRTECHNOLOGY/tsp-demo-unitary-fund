@@ -12,7 +12,7 @@ import {mapActions} from '../../reducers/mapActions';
 import './Map.css';
 
 const InProgressOverlay = () => (
-    <div className="InProgressOverlay">
+    <div className="DemoInProgressOverlay">
         Finding solution in progress
     </div>
 );
@@ -38,7 +38,7 @@ class Map extends Component {
             lng: 21.01
         },
         dataPoints: [],
-        zoom: 12
+        zoom: 3
     };
 
     apiIsLoaded(map, maps) {
@@ -51,8 +51,8 @@ class Map extends Component {
     }
 
     componentWillReceiveProps(newProps, oldProps) {
-        const oldSolutionRoute = oldProps.solutionRoute && oldProps.solutionRoute.map(({id}) => id).join('');
-        const solutionRoute = newProps.solutionRoute && newProps.solutionRoute.map(({id}) => id).join('');
+        const oldSolutionRoute = oldProps.solutionRoute && oldProps.solutionRoute.map(({lat, lng}) => lat + '' + lng).join('');
+        const solutionRoute = newProps.solutionRoute && newProps.solutionRoute.map(({lat, lng}) => lat + '' + lng).join('');
         if (solutionRoute !== oldSolutionRoute) {
             if (this.state.path) {
                 this.state.path.setMap(null);
@@ -64,7 +64,7 @@ class Map extends Component {
                 const path = new this.state.maps.Polyline({
                     path: pathCoordinates,
                     geodesic: true,
-                    strokeColor: '#ff1500',
+                    strokeColor: '#ff8400',
                     strokeOpacity: 0.9,
                     strokeWeight: 2
                 });
@@ -77,7 +77,7 @@ class Map extends Component {
 
     render() {
         return (
-            <div className="Map">
+            <div className="DemoMap">
                 {this.props.findingSolutionInProgress && <InProgressOverlay/>}
                 <GoogleMapReact
                     bootstrapURLKeys={{key: GOOGLE_MAPS_API_KEY}}

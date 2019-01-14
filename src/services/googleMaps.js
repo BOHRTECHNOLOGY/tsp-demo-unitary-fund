@@ -34,6 +34,5 @@ export const getDistancesMatrix = async (points) => {
     const service = new GoogleMaps.DistanceMatrixService();
 
     const distances = await computeMatrix({latLongs, service});
-
     return distances.map(({elements}) => elements.map(({duration}) => duration.value))
 };

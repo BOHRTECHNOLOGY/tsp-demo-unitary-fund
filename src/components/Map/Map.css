@@ -1,4 +1,4 @@
-.InProgressOverlay {
+.DemoInProgressOverlay {
     position: absolute;
     height: 100%;
     width: 100%;
@@ -14,7 +14,7 @@
     font-size: 2.3rem;
 }
 
-.Map {
+.DemoMap {
     height: 100%;
     position: relative;
 }
