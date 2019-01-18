@@ -18,8 +18,10 @@ const computeMatrix = ({latLongs, service, attempts = 3}) => new Promise((resolv
                     return reject(new Error(`Call to DistanceMatrixService failed with status: ${status}`));
                 }
                 try {
+                    // The DistanceMatrix API is rate limited.
+                    // We wait for 2 seconds and attempt again.
                     await promiseTimeout(2000);
-                    return resolve(await computeMatrix({latLongs, service, attempts: attempts - 1}))
+                    return resolve(await computeMatrix({latLongs, service, attempts: attempts - 1}));
                 } catch (err) {
                     return reject(err);
                 }
@@ -29,10 +31,14 @@ const computeMatrix = ({latLongs, service, attempts = 3}) => new Promise((resolv
         })
 });
 
+/**
+ * @param {Array<{lat: Number, lng: Number}>} points
+ * @returns {Promise<Array<Array<Number>>>}
+ */
 export const getDistancesMatrix = async (points) => {
     const latLongs = points.map(({lat, lng}) => new GoogleMaps.LatLng(lat, lng));
     const service = new GoogleMaps.DistanceMatrixService();
 
     const distances = await computeMatrix({latLongs, service});
-    return distances.map(({elements}) => elements.map(({duration}) => duration.value))
+    return distances.map(({elements}) => elements.map(({duration}) => duration.value));
 };
