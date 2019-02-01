@@ -25,29 +25,35 @@ def construct_qubo(distance_matrix, dist_mul=1, const_mul=8500):
     x = partial(map_x_to_qubit, num_variables=number_of_locations)
     qubo = defaultdict(float)
 
-    # First: add row constraints
-    for row in range(number_of_locations):
-        for i in range(number_of_locations):
+    # First: add row constraints. Don't include first row, as it is fixed
+    # as a part of optimized encoding
+    for row in range(1, number_of_locations):
+        for i in range(1, number_of_locations):
             qubo[(x(row, i), x(row, i))] += -const_mul
             for j in range(i+1, number_of_locations):
                 qubo[(x(row, i), x(row, j))] += 2 * const_mul
                 qubo[(x(row, j), x(row, i))] += 2 * const_mul
 
-    # Second: add column constraints
-    for col in range(number_of_locations):
-        for i in range(number_of_locations):
+    # Second: add column constraints. Note that we treat i=0 in special way
+    # due to an optimized encoding
+    for col in range(1, number_of_locations):
+        for i in range(1, number_of_locations):
             qubo[(x(i, col), x(i, col))] += -const_mul
             for j in range(i+1, number_of_locations):
                 qubo[(x(i, col), x(j, col))] += 2 * const_mul
                 qubo[(x(j, col), x(i, col))] += 2 * const_mul
 
     # Third: add the objective function
-    for i in range(number_of_locations):
-        for j in range(number_of_locations):
+    for i in range(1, number_of_locations):
+        # First and last steps are special as they produce linear terms
+        dist =  distance_matrix[0, i]
+        qubo[x(1, i), x(1, i)] += dist_mul * dist
+        qubo[(x(number_of_locations-1, i), x(number_of_locations-1, i))] += dist_mul * dist
+        for j in range(1, number_of_locations):
             if i != j:
-                for step in range(number_of_locations):
+                for step in range(1, number_of_locations-1):
                     dist = distance_matrix[i, j]
-                    qubo[(x(i, step), x(j, (step+1) % number_of_locations))] += dist_mul * dist
+                    qubo[(x(step, i), x((step+1) % number_of_locations, j))] += dist_mul * dist
     return qubo
 
 def map_x_to_qubit(i, j, num_variables):
@@ -77,16 +83,17 @@ def route_from_sample(sample, number_of_locations, start=None, end=None):
        not well defined.
     """
     # Number of nodes can be different from number of locations if dummy is included
-    if len(sample) != number_of_locations ** 2:
+    if len(sample) != (number_of_locations-1) ** 2:
         number_of_nodes = number_of_locations + 1
     else:
         number_of_nodes = number_of_locations
 
     route = [-1 for _ in range(number_of_nodes)]
+    route[0] = 0 # We assumed it
     for qubit in sample:
         if sample[qubit] > 0:
-            # Note that mapping takes into account numbe of nodes, not locations
-            location, step = map_qubit_to_x(qubit, number_of_nodes)
+            # Note that mapping takes into account number of nodes, not locations
+            step, location = map_qubit_to_x(qubit, number_of_nodes)
             route[step] = location
 
     if number_of_nodes > number_of_locations:

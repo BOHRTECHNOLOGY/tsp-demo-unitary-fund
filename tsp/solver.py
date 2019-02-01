@@ -1,11 +1,14 @@
 """Module containing functions for solving TSP using D-Wave's Qbsolv."""
 from collections import namedtuple
 from dwave_qbsolv import QBSolv
+from dwave.system.samplers import DWaveSampler
+from dwave.system.composites import EmbeddingComposite
 import numpy
 from tsp.qubo import construct_qubo, route_from_sample
 from tsp.utils import create_distance_matrix, calculate_mileage
 
 TSPSolution = namedtuple('TSPSolution', ['route', 'energy', 'mileage'])
+DWAVE_ENDPOINT = 'https://cloud.dwavesys.com/sapi'
 
 def sample_from_locations(locations, dist_mul=1, const_mul=8500, **kwargs):
     """Sample TSP qubo from given locations and return lowet-energy solution.
@@ -42,7 +45,19 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
         # then we are dealing in non-returning TSP - and have to add dummy node
         dist_matrix = add_dummy_node(dist_matrix, start, end)
     qubo = construct_qubo(dist_matrix, dist_mul, const_mul)
-    result = QBSolv().sample_qubo(qubo, **kwargs)
+
+    use_dwave = kwargs.get('use_dwave', False)
+    token = kwargs.get('dwave_token', None)
+
+    if 'use_dwave' in kwargs:
+        del kwargs['use_dwave']
+        del kwargs['dwave_token']
+
+    if use_dwave:
+        sampler = EmbeddingComposite(DWaveSampler(token=token, endpoint=DWAVE_ENDPOINT))
+        result = sampler.sample_qubo(qubo, num_reads=1000, chain_strength=800)
+    else:
+        result = QBSolv().sample_qubo(qubo, **kwargs)
     route = route_from_sample(next(iter(result.samples())), number_of_locations, start, end)
     mileage = calculate_mileage(dist_matrix, route)
     return TSPSolution(route, result.data_vectors['energy'][0], mileage)
