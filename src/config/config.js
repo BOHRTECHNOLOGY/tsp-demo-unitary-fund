@@ -1,0 +1,5 @@
+export const GOOGLE_MAPS_API_KEY = 'AIzaSyDsxzbYc_IIAeqHXkxDWJd5H2DORBd9uY0';
+
+export const MAX_SELECTED_POINTS_COUNT = 9;
+
+export const MIN_SELECTED_POINTS_COUNT = 4;

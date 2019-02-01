@@ -1,0 +1,9 @@
+.MapsBox {
+  padding-top: 100px;
+  height: calc(100vh - 200px);
+}
+
+.ButtonContainer {
+  float: right;
+  padding-bottom: 100px;
+}

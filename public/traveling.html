@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quantum TSP</title>
+    <!-- Bootstrap -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
+    <link rel="manifest" href="assets/img/site.webmanifest">
+    <link rel="mask-icon" href="assets/img/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">    
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+    <!--============================= HEADER =============================-->
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+                <a class="navbar-brand" href="index.html"><img src="assets/img/qsolver.png" alt="logo"></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                  <li class="nav-item active">
+                      <span class="sr-only">(current)</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="quantum.html">Quantum Computing</a>
+                    </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="traveling.html">Traveling Salesman</a>
+                    </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+    <!--//HEADER -->
+<!--============================= MAIN =============================-->
+
+<section class="text-center head_img" style="background-image: url('assets/img/car2.jpg');">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-9 mx-auto text-white">
+          <h1 class="mb-4 header_text2 my-5"><b>21st century problem - traffic congestion
+          </b></h1>
+          <p class="my-5 header_text text-left">In a world of constant mobility innovations you’d think that eliminating traffic would be simple.
+            It will be with quantum computing.</p>
+            <br>
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  
+<!--============================= MID_TEXT =============================-->
+
+<section class="justify-content-end bg-light">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-9 mx-auto">
+                <h1 class="mb-4 header_text2 my-5"><b>Quantum Traveling Salesman</b></h1>
+                <p class="my-5 header_text">There was a travelling salesman, who wanted to visit several capitals in Europe. He wondered - in what order should I do that, so I travel for the minimal possible distance?
+                    </p>
+                    <p class="my-5 header_text">
+                      This is the same question mathematicians and computer scientists ponder about for more than half a century. Why do we say it is a hard problem?                    </p>
+                    <p class="my-5 header_text">
+                      Because the number of possible solutions explodes exponentially - take a look at the table below </p>
+
+                </div>
+            </div>
+          </div>
+        </div>
+      </section>
+<!--//MID_TEXT -->
+
+
+<section class="showcase1">
+      <div class="row">
+        <div class="col-lg-5 order-lg-2  table">
+              <style type="text/css">
+                  .tg td{overflow:hidden;word-break:normal;}
+                  @media screen and (max-width: 767px) {.tg {width: auto !important;}.tg col {width: auto !important;}.tg-wrap {overflow-x: auto;-webkit-overflow-scrolling: touch;}}</style>
+                  <div class="tg-wrap"><table class="tg">
+                    <tr>
+                      <th class="tg-baqh">Cities</th>
+                      <th class="tg-baqh">Combinations</th>
+                      <th class="tg-baqh">Time</th>
+                    </tr>
+                    <tr>
+                      <td class="tg-baqh">5</td>
+                      <td class="tg-0lax">12</td>
+                      <td class="tg-0lax">12 microseconds</td>
+                    </tr>
+                    <tr>
+                      <td class="tg-baqh">10</td>
+                      <td class="tg-0lax">181000</td>
+                      <td class="tg-0lax">10 hours</td>
+                    </tr>
+                    <tr>
+                      <td class="tg-baqh">20</td>
+                      <td class="tg-0lax">6.1&times10<sup>16</sup></td>
+                      <td class="tg-0lax">2000 years</td>
+                    </tr>
+                    <tr>
+                      <td class="tg-baqh">25</td>
+                      <td class="tg-0lax">3.1&times10<sup>23</sup></td>
+                      <td class="tg-0lax">983 million years</td>
+                    </tr>
+                  </table></div>                          </div>
+            <div class="col-lg-6 order-lg-1 showcase-text">
+            <h2 class="my-3"> More numbers <hr></h2>
+            <p class="medium-body"> Even for a relatively small number of cities, there are too many possible solutions to search through all of them.
+              </p>
+              <p class="medium-body">It’s not that we are not able to solve this problem with contemporary computers - we can find “good enough” solutions for millions of cities. But it takes a lot of time and we know that better solutions exist.</p>
+            </div>
+          </div>
+    </div>
+  </section>
+
+<!--============================= MID_TEXT =============================-->
+<section class="text-center bg-light ">
+    <div class="quantum_computing container">
+      <div class="row">
+        <div class="col-xl-9 mx-auto my-5">
+            <h1 class="mb-4 header_text2"><b>Why do we even bother?
+              </b></h1>
+            <p class="my-5 header_text text-left">Let’s be honest - TSP itself doesn’t have that many crucial applications. But if you slightly modify the problem, for example by adding many salespeople and limiting how many items given salesman can take, it turns out this is exactly the problem companies like Fedex or DHL are struggling with. Now imagine how hard it must to be to optimize this kind of problems on the national scale.
+            </p>
+            <p class="my-5 header_text text-left">But solving TSP is just a tip of an iceberg. There are many more problems across all the industries that require similar approach and are equally hard to solve. We call them  <a href="https://en.wikipedia.org/wiki/Combinatorial_optimization"> combinatorial optimization problems </a>. We solve them not only to deliver packages but also to coordinate airplanes, create schedules, improve manufacturing and many others.
+              </p>  
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+<!--//MID_TEXT -->
+
+<!--============================= MID_TEXT =============================-->
+            <section class="justify-content-end">
+                    <div class="quantum_computing container">
+                      <div class="row">
+                        <div class="col-xl-9 mx-auto">
+                            <h1 class="mb-4 header_text2"><b>How quantum computers can help?</b></h1>
+                            <p class="my-5 header_text">There are plenty of things you can't do with a quantum computer. You can't browse internet, play games or watch videos. There aren't many conventional usages.
+                            </p>
+                            <p class="my-5 header_text">But there are a couple of things they are particularly good at. One of them is solving the aforementioned optimization problems. By leveraging some intrinsic properties of quantum systems, they can make calculations faster and produce better results than classical computers. This is something you can test out with our demo.
+                                </p>
+                                <p class="my-5 header_text">
+                                    Quantum computers are not beating classical computers yet. But this might change in the next couple of years due to their rapid development. That's why more and more people are excited about this field.                                </p>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+            <!--//MID_TEXT -->
+
+<!--============================= CTA =============================-->
+<section class="call-to-action text-white text-center ">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-9 mx-auto">
+            <h1 class="mb-4"><b>Do you want to learn more?</b></h1>
+            <h4>Solve a Travelling Salesman Problem using an actual quantum computer!</h4>
+          </div>
+          <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+              <a class="btn btn-primary btn-xl my-5" href="https://github.com/mstechly/quantum_tsp_tutorials">Learn more</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--//CTA -->
+
+    <div class="my-5">
+        <div class="row">
+            <div class="col-md-9 cta-contents">
+                <h2 class="cta-title "><b>Checkout our paper about Traveling Salesman</b></h2>
+                <div class="cta-desc">
+                    <p>by Michał Stęchły</p>
+                  </div>
+            </div>
+            <div class="col-md-3 cta-button">
+                <a href="https://unitary.fund/"><u>Learn more</u></a>
+            </div>
+         </div>
+    </div>
+
+
+<!--============================= FOOTER =============================-->
+<footer class="footer bg-white">
+        <hr>
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
+                <ul class="list-inline mb-2">
+                  <li class="list-inline-item">
+                    <a href="quantum.html">Quantum Computing</a>
+                  </li>
+                  <li class="list-inline-item">&sdot;</li>
+                  <li class="list-inline-item">
+                    <a href="traveling.html">Traveling Salesman</a>
+                  </li>
+                </ul>
+                <p class="text-muted small mb-4 mb-lg-0">&copy;© 2019 Project done in cooperation with <a href="http://bohr.technology"> Bohr Technology </a>and<a href="https://unitary.fund/"> Unitary Fund </a>
+                </p>
+              </div>
+              <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
+                <ul class="list-inline mb-0">
+                  <li class="list-inline-item mr-3">
+                    <a href="#">
+                      <i class="fab fa-facebook fa-2x fa-fw"></i>
+                    </a>
+                  </li>
+                  <li class="list-inline-item mr-3">
+                    <a href="#">
+                      <i class="fab fa-twitter-square fa-2x fa-fw"></i>
+                    </a>
+                  </li>
+                  <li class="list-inline-item">
+                    <a href="#">
+                      <i class="fab fa-instagram fa-2x fa-fw"></i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </footer>
+        <!--//FOOTER -->
+    
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="assets/js/bootstrap.min.js"></script>
+    
+      </body>
+    </html>
+    
