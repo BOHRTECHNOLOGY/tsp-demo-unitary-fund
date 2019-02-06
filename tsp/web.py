@@ -6,6 +6,20 @@ import falcon
 import numpy
 from tsp.solver import sample_from_distance_matrix
 
+# unitary:web
+BASIC_AUTH_TOKEN = 'Basic dW5pdGFyeTp3ZWI='
+STATIC_DIRECTORY = os.path.abspath(os.path.join(os.getcwd(), './build'))
+INDEX_HTML = os.path.abspath(os.path.join(STATIC_DIRECTORY, './index.html'))
+
+class AuthMiddleware(object):
+
+    def process_request(self, req, resp):
+        token = req.get_header('Authorization')
+        if token is None or token != BASIC_AUTH_TOKEN:
+            raise falcon.HTTPUnauthorized('Authentication required', headers=[('WWW-Authenticate', 'Basic realm=Authorization Required')])
+
+
+
 logging.basicConfig(level='WARNING')
 
 DWAVE_ENDPOINT = 'https://cloud.dwavesys.com/sapi'
@@ -57,5 +71,16 @@ class TSPResource(object):
         resp.body =  json.dumps({'route': result.route, 'distance': result.mileage,
                                  'energy': result.energy})
 
-api = falcon.API()
+api = falcon.API(middleware=[
+                     AuthMiddleware()
+                 ])
+
+def index_html_sink(req, resp):
+    resp.content_type = 'text/html; charset=utf-8'
+
+    with open(INDEX_HTML, 'rt') as f:
+        resp.body = f.read()
+
+api.add_sink(index_html_sink, prefix='^/$')
+api.add_static_route('/', STATIC_DIRECTORY)
 api.add_route('/tsp/solve', TSPResource())
