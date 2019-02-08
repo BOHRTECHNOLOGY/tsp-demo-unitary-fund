@@ -3,7 +3,7 @@ from collections import namedtuple
 from dwave_qbsolv import QBSolv
 from dwave.system.samplers import DWaveSampler
 from dwave.system.composites import EmbeddingComposite
-import numpy
+import numpy as np
 from tsp.qubo import construct_qubo, route_from_sample
 from tsp.utils import create_distance_matrix, calculate_mileage
 
@@ -38,7 +38,10 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
     calculation of distance matrix (which is instead given as parameter) and can
     take into account starting and ending node.
     """
-    dist_matrix = numpy.array(dist_matrix)
+    dist_matrix = np.array(dist_matrix)
+    max_distance = np.max(dist_matrix)
+    dist_matrix = dist_matrix / max_distance
+
     number_of_locations = dist_matrix.shape[0]
     if start is not None and end is not None and start != end:
         # if both start and end are given and they are different
@@ -59,13 +62,13 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
     else:
         result = QBSolv().sample_qubo(qubo, **kwargs)
     route = route_from_sample(next(iter(result.samples())), number_of_locations, start, end)
-    mileage = calculate_mileage(dist_matrix, route)
+    mileage = calculate_mileage(dist_matrix * max_distance, route)
     return TSPSolution(route, result.data_vectors['energy'][0], mileage)
 
 def add_dummy_node(distance_matrix, start, end):
     """Add a dummy node to the distance matrix, allowing one to solve non-cyclic TSP problem."""
     problem_size = distance_matrix.shape[0]
-    augmented_matrix = numpy.zeros((problem_size+1, problem_size+1))
+    augmented_matrix = np.zeros((problem_size+1, problem_size+1))
     augmented_matrix[0:problem_size, 0:problem_size] = distance_matrix
     penalty = distance_matrix.sum()
     for i in range(problem_size):
