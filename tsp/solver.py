@@ -7,7 +7,8 @@ import numpy as np
 from tsp.qubo import construct_qubo, route_from_sample
 from tsp.utils import create_distance_matrix, calculate_mileage
 
-TSPSolution = namedtuple('TSPSolution', ['route', 'energy', 'mileage'])
+
+TSPSolution = namedtuple('TSPSolution', ['route', 'energy', 'mileage', 'info'])
 DWAVE_ENDPOINT = 'https://cloud.dwavesys.com/sapi'
 
 def sample_from_locations(locations, dist_mul=1, const_mul=8500, **kwargs):
@@ -59,11 +60,18 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
     if use_dwave:
         sampler = EmbeddingComposite(DWaveSampler(token=token, endpoint=DWAVE_ENDPOINT))
         result = sampler.sample_qubo(qubo, num_reads=1000, chain_strength=800)
+        info = {"total_time":result.info['timing']['total_real_time']/10e6, 
+            "chip_runtime": result.info['timing']['run_time_chip']/10e-6,
+            "qpu_programming_time": result.info['timing']['qpu_programming_time']/10e-6,
+            "machine": "DWAVE 2000Q"}
+
     else:
         result = QBSolv().sample_qubo(qubo, **kwargs)
+        info = {}
     route = route_from_sample(next(iter(result.samples())), number_of_locations, start, end)
     mileage = calculate_mileage(dist_matrix * max_distance, route)
-    return TSPSolution(route, result.data_vectors['energy'][0], mileage)
+    info['mileage'] = mileage
+    return TSPSolution(route, result.data_vectors['energy'][0], mileage, info)
 
 def add_dummy_node(distance_matrix, start, end):
     """Add a dummy node to the distance matrix, allowing one to solve non-cyclic TSP problem."""
