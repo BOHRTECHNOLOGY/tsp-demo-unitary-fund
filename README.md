@@ -30,3 +30,4 @@
 * To modify the demo app go to `src/index.js`
 * To modify the python API go to `tsp/web.py`
 * To modify list of points for the demo app go to `src/data/points.json`
+
