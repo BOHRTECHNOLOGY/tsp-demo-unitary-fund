@@ -71,6 +71,9 @@ class TSPResource(object):
         resp.body =  json.dumps({'route': result.route, 'distance': result.mileage,
                                  'energy': result.energy})
 
+# api = falcon.API(middleware=[
+#                      AuthMiddleware()
+#                  ])
 api = falcon.API()
 
 def index_html_sink(req, resp):
