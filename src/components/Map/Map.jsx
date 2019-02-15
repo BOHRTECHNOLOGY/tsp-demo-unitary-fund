@@ -13,7 +13,8 @@ import './Map.css';
 
 const InProgressOverlay = () => (
     <div className="DemoInProgressOverlay">
-        Finding solution in progress
+        Finding solution using a <a href="https://www.dwavesys.com" target="_blank" rel="noopener noreferrer">quantum computer</a>
+
     </div>
 );
 
