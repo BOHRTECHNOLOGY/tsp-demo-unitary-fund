@@ -61,7 +61,7 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
         try:
             sampler = EmbeddingComposite(DWaveSampler(token=token, endpoint=DWAVE_ENDPOINT))
             result = sampler.sample_qubo(qubo, num_reads=1000, chain_strength=800)
-            info = {"total_time": result.info['timing']['total_real_time']/10e6, 
+            info = {"total_time": result.info['timing']['total_real_time']/10e3,
                 "machine": "DWAVE 2000Q"}
         except Exception as e:
             result = QBSolv().sample_qubo(qubo, **kwargs)

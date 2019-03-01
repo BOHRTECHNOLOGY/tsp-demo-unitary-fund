@@ -42,10 +42,9 @@ class TSPResource(object):
 
         if use_dwave:
             if DWAVE_TOKEN is None:
-                resp.status_code = 412
-                return
+                use_dwave = False
             kwargs = {
-                'use_dwave': True,
+                'use_dwave': use_dwave,
                 'dwave_token': DWAVE_TOKEN
             }
         else:

@@ -5,6 +5,7 @@ import Store from './store/Store';
 import FindRouteButton from './components/FindRouteButton/FindRouteButton';
 import Map from './components/Map/Map';
 import SolutionInfo from './components/SolutionInfo/SolutionInfo';
+import ChooseRandomButton from './components/ChooseRandomButton/ChooseRandomButton';
 
 const App = () => (
     <Provider store={Store}>
@@ -14,6 +15,7 @@ const App = () => (
             </div>
             <div className="ButtonContainer">
                 <SolutionInfo/>
+                <ChooseRandomButton/>
                 <FindRouteButton/>
             </div>
         </div>
