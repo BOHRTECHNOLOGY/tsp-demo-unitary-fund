@@ -68,8 +68,12 @@ class TSPResource(object):
 
         result = sample_from_distance_matrix(dist_matrix, dist_mul, const_mul, start=start, end=end, **kwargs)
         resp.content_type = falcon.MEDIA_JSON
-        resp.body =  json.dumps({'route': result.route, 'distance': result.mileage,
-                                 'energy': result.energy})
+        resp.body =  json.dumps({
+            'route': result.route,
+            'distance': result.mileage,
+            'energy': result.energy,
+            'info': result.info,
+        })
 
 # api = falcon.API(middleware=[
 #                      AuthMiddleware()

@@ -9,5 +9,5 @@ export async function solve(distances) {
         })
         .accept('application/json');
 
-    return body.route;
+    return body;
 }

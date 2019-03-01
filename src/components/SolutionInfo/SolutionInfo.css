@@ -1,0 +1,14 @@
+.SolutionInfo {
+    float: left;
+    width: 450px;
+    margin-left: 0;
+    padding-top: 20px;
+}
+
+.SolutionInfo p {
+    margin-bottom: 0;
+}
+
+.LocalMachineInfo {
+    font-size: 0.9rem;
+}

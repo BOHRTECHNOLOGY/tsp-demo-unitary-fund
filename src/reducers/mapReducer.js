@@ -48,6 +48,7 @@ const mapReducer = (state = defaultState, action) => {
                 ...state,
                 findingSolutionInProgress: false,
                 solution: action.solution,
+                info: action.info,
             };
 
         case MAP_ACTION_TYPES.RESET:
