@@ -4,6 +4,6 @@
 }
 
 .ButtonContainer {
-  float: right;
-  padding-bottom: 100px;
+  display: flex;
+  max-height: 150px;
 }
