@@ -5,7 +5,8 @@ export async function solve(distances) {
         .send({
             distances,
             start_node: 0,
-            end_node: distances.length - 1
+            end_node: distances.length - 1,
+            use_dwave: true
         })
         .accept('application/json');
 
