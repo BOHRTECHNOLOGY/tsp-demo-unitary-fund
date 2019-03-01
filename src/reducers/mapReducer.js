@@ -1,10 +1,13 @@
 import rawPoints from '../data/points.json'
+import randomPaths from '../data/random.json'
 import {MAP_ACTION_TYPES} from './mapActions';
 import {MAX_SELECTED_POINTS_COUNT, MIN_SELECTED_POINTS_COUNT} from '../config/config';
 
 // Ensure each point has a unique id
 // Create a map for easier access
 const MAP_POINTS_BY_ID = rawPoints.reduce((previous, point, id) => ({...previous, [id]: {...point, id}}), {});
+
+const getRandomPath = () => randomPaths[Math.ceil(Math.random() * randomPaths.length) - 1];
 
 export const defaultState = {
     pointsById: MAP_POINTS_BY_ID,
@@ -49,6 +52,12 @@ const mapReducer = (state = defaultState, action) => {
                 findingSolutionInProgress: false,
                 solution: action.solution,
                 info: action.info,
+            };
+
+        case MAP_ACTION_TYPES.CHOOSE_RANDOM:
+            return {
+                ...state,
+                selected: getRandomPath(),
             };
 
         case MAP_ACTION_TYPES.RESET:

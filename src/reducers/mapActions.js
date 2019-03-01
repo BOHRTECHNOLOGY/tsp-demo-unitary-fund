@@ -6,14 +6,16 @@ export const MAP_ACTION_TYPES = {
     POINT_TOGGLE: 'POINT_TOGGLE',
     COMPUTE_START: 'COMPUTE_START',
     COMPUTE_SUCCESS: 'COMPUTE_SUCCESS',
-    RESET: 'RESET'
+    RESET: 'RESET',
+    CHOOSE_RANDOM: 'CHOOSE_RANDOM'
 };
 
 const mapActionCreators = {
     pointToggle: (id) => ({type: MAP_ACTION_TYPES.POINT_TOGGLE, id}),
     computeStart: () => ({type: MAP_ACTION_TYPES.COMPUTE_START}),
     computeSuccess: (solution, info) => ({type: MAP_ACTION_TYPES.COMPUTE_SUCCESS, solution, info}),
-    reset: () => ({type: MAP_ACTION_TYPES.RESET})
+    reset: () => ({type: MAP_ACTION_TYPES.RESET}),
+    chooseRandom: () => ({type: MAP_ACTION_TYPES.CHOOSE_RANDOM})
 };
 
 export const mapActions = {
@@ -38,4 +40,6 @@ export const mapActions = {
     },
 
     reset: () => mapActionCreators.reset(),
+
+    chooseRandom: () => mapActionCreators.chooseRandom()
 };
