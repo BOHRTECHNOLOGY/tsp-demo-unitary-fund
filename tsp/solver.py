@@ -60,14 +60,15 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
     if use_dwave:
         sampler = EmbeddingComposite(DWaveSampler(token=token, endpoint=DWAVE_ENDPOINT))
         result = sampler.sample_qubo(qubo, num_reads=1000, chain_strength=800)
-        info = {"total_time":result.info['timing']['total_real_time']/10e6, 
+        info = {"total_time":result.info['timing']['total_real_time']/10e6,
             "chip_runtime": result.info['timing']['run_time_chip']/10e-6,
             "qpu_programming_time": result.info['timing']['qpu_programming_time']/10e-6,
             "machine": "DWAVE 2000Q"}
 
     else:
         result = QBSolv().sample_qubo(qubo, **kwargs)
-        info = {}
+        info = {"machine": 'local'}
+
     route = route_from_sample(next(iter(result.samples())), number_of_locations, start, end)
     mileage = calculate_mileage(dist_matrix * max_distance, route)
     info['mileage'] = mileage

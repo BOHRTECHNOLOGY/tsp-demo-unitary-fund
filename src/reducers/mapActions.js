@@ -12,7 +12,7 @@ export const MAP_ACTION_TYPES = {
 const mapActionCreators = {
     pointToggle: (id) => ({type: MAP_ACTION_TYPES.POINT_TOGGLE, id}),
     computeStart: () => ({type: MAP_ACTION_TYPES.COMPUTE_START}),
-    computeSuccess: (solution) => ({type: MAP_ACTION_TYPES.COMPUTE_SUCCESS, solution}),
+    computeSuccess: (solution, info) => ({type: MAP_ACTION_TYPES.COMPUTE_SUCCESS, solution, info}),
     reset: () => ({type: MAP_ACTION_TYPES.RESET})
 };
 
@@ -28,12 +28,13 @@ export const mapActions = {
         dispatch(mapActionCreators.computeStart());
 
         const selectedPoints = getSelectedPoints(state.map);
+        const start = Date.now();
 
         const distances = await getDistancesMatrix(selectedPoints);
-        const solutionIndexes = await solve(distances);
+        const {route: solutionIndexes, info} = await solve(distances);
         const solution = solutionIndexes.map(index => state.map.selected[index]);
 
-        dispatch(mapActionCreators.computeSuccess(solution));
+        dispatch(mapActionCreators.computeSuccess(solution, {...info, duration: Date.now() - start}));
     },
 
     reset: () => mapActionCreators.reset(),

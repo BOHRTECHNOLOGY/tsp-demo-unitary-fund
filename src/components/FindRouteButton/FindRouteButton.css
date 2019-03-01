@@ -1,8 +1,4 @@
-.DemoButton {
-    width: 200px;
-    border: 1px solid black;
-    height: 40px;
-    background: #82b3e1;
-    font-size: 1.1rem;
-    border-radius: 20px;
+.FindRouteButton {
+    margin-right: 0;
+    margin-left: auto;
 }

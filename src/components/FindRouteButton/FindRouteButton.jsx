@@ -19,7 +19,7 @@ const FindRouteButton = ({computeBlocked, computingInProgress, compute, reset, r
 
     return (
         <button
-            className={'button btn btn-primary btn-xl my-5'}
+            className={'button btn btn-primary btn-xl my-5 FindRouteButton'}
             disabled={disabled}
             onClick={resetMode ? reset : compute}
         >
