@@ -40,16 +40,16 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
     take into account starting and ending node.
     """
     dist_matrix = np.array(dist_matrix)
-    max_distance = np.max(dist_matrix)
-    dist_matrix = dist_matrix / max_distance
 
     number_of_locations = dist_matrix.shape[0]
     if start is not None and end is not None and start != end:
         # if both start and end are given and they are different
         # then we are dealing in non-returning TSP - and have to add dummy node
         dist_matrix = add_dummy_node(dist_matrix, start, end)
-    qubo = construct_qubo(dist_matrix, dist_mul, const_mul)
+    max_distance = np.max(dist_matrix)
+    dist_matrix = dist_matrix / max_distance
 
+    qubo = construct_qubo(dist_matrix, dist_mul, const_mul)
     use_dwave = kwargs.get('use_dwave', False)
     token = kwargs.get('dwave_token', None)
 
@@ -59,19 +59,25 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
 
     if use_dwave:
         try:
+            print("Start solving using D-Wave!")
             sampler = EmbeddingComposite(DWaveSampler(token=token, endpoint=DWAVE_ENDPOINT))
-            result = sampler.sample_qubo(qubo, num_reads=1000, chain_strength=800)
+            result = sampler.sample_qubo(qubo, num_reads=1000, chain_strength=const_mul*2)
             info = {"total_time": result.info['timing']['total_real_time']/10e3,
                 "machine": "DWAVE 2000Q"}
         except Exception as e:
+            print(e)
+            print("D-Wave failed, switched to QBSolv!")
             result = QBSolv().sample_qubo(qubo, **kwargs)
             info = {"machine": "local"}
     else:
+        print("Start solving using QBSolve")
         result = QBSolv().sample_qubo(qubo, **kwargs)
         info = {"machine": "local"}
+    print("Got answer!")
     route = route_from_sample(next(iter(result.samples())), number_of_locations, start, end)
     mileage = calculate_mileage(dist_matrix * max_distance, route)
     info['mileage'] = mileage
+    print("Problem solved!")
     return TSPSolution(route, result.data_vectors['energy'][0], mileage, info)
 
 def add_dummy_node(distance_matrix, start, end):
