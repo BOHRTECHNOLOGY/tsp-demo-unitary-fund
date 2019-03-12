@@ -46,9 +46,10 @@ def construct_qubo(distance_matrix, dist_mul=1, const_mul=8500):
     # Third: add the objective function
     for i in range(1, number_of_locations):
         # First and last steps are special as they produce linear terms
-        dist =  distance_matrix[0, i]
-        qubo[x(1, i), x(1, i)] += dist_mul * dist
-        qubo[(x(number_of_locations-1, i), x(number_of_locations-1, i))] += dist_mul * dist
+        dist_to_first =  distance_matrix[0, i]
+        dist_to_last =  distance_matrix[-1, i]
+        qubo[x(1, i), x(1, i)] += dist_mul * dist_to_first
+        qubo[(x(number_of_locations-1, i), x(number_of_locations-1, i))] += dist_mul * dist_to_last
         for j in range(1, number_of_locations):
             if i != j:
                 for step in range(1, number_of_locations-1):
@@ -96,8 +97,8 @@ def route_from_sample(sample, number_of_locations, start=None, end=None):
             step, location = map_qubit_to_x(qubit, number_of_nodes)
             route[step] = location
 
-    if number_of_nodes > number_of_locations:
-        route.remove(number_of_locations)
+    if number_of_nodes >= number_of_locations:
+        # route.remove(number_of_locations)
         return adjust_ends_acyclic(route, start, end)
 
     return adjust_ends_cyclic(route, start)

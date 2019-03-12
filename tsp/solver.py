@@ -40,12 +40,7 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
     take into account starting and ending node.
     """
     dist_matrix = np.array(dist_matrix)
-
     number_of_locations = dist_matrix.shape[0]
-    if start is not None and end is not None and start != end:
-        # if both start and end are given and they are different
-        # then we are dealing in non-returning TSP - and have to add dummy node
-        dist_matrix = add_dummy_node(dist_matrix, start, end)
     max_distance = np.max(dist_matrix)
     dist_matrix = dist_matrix / max_distance
 
@@ -79,19 +74,3 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
     info['mileage'] = mileage
     print("Problem solved!")
     return TSPSolution(route, result.data_vectors['energy'][0], mileage, info)
-
-def add_dummy_node(distance_matrix, start, end):
-    """Add a dummy node to the distance matrix, allowing one to solve non-cyclic TSP problem."""
-    problem_size = distance_matrix.shape[0]
-    augmented_matrix = np.zeros((problem_size+1, problem_size+1))
-    augmented_matrix[0:problem_size, 0:problem_size] = distance_matrix
-    penalty = distance_matrix.sum()
-    for i in range(problem_size):
-        if i not in (start, end):
-            # We make sure that it is only feasible to go from start to dummy
-            # or from end to dummy (and in opposite direction)
-            # Routes connecting dummy and other nodes should be not favourable
-            # because their total cost is much larger than this
-            augmented_matrix[i, problem_size] = penalty
-            augmented_matrix[problem_size, i] = penalty
-    return augmented_matrix
