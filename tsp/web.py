@@ -63,7 +63,8 @@ class TSPResource(object):
             dist_mul,
             const_mul,
             start=start,
-            end=end)
+            end=end,
+            use_dwave=False)
 
     def on_post(self, req, resp):
         """The POST handler."""
@@ -74,8 +75,7 @@ class TSPResource(object):
         use_dwave = payload.get('use_dwave', False)
 
         if use_dwave and DWAVE_TOKEN is None: # Terminate early if D-Wave solution requested
-            resp.status_code = 412
-            return
+            use_dwave = False
 
         try:
             dist_matrix = numpy.array(payload['distances'], dtype='float64')
@@ -104,7 +104,7 @@ class TSPResource(object):
                     const_mul,
                     start=start,
                     end=end)
-            except CallLimitExceededError:
+            except:
                 logger = logging.getLogger('tsp.api')
                 logger.warning('Throttling triggered. Classical solution will be returned')
                 classical_solution_needed = True
