@@ -2,5 +2,7 @@ falcon
 numpy
 gunicorn
 geopy
+choke
+redis
 dwave_qbsolv==0.2.9
 dwave-system==0.5.1
