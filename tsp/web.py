@@ -63,8 +63,7 @@ class TSPResource(object):
             dist_mul,
             const_mul,
             start=start,
-            end=end,
-            use_dwave=False)
+            end=end)
 
     def on_post(self, req, resp):
         """The POST handler."""
@@ -104,9 +103,12 @@ class TSPResource(object):
                     const_mul,
                     start=start,
                     end=end)
-            except:
+            except CallLimitExceededError:
                 logger = logging.getLogger('tsp.api')
                 logger.warning('Throttling triggered. Classical solution will be returned')
+                classical_solution_needed = True
+            except Exception as e:
+                print("Unexpected error:", e)
                 classical_solution_needed = True
 
         if classical_solution_needed:
