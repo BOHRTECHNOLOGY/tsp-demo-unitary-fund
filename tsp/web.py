@@ -4,12 +4,20 @@ import logging
 import os
 import falcon
 import numpy
+from redis import StrictRedis
+from choke import RedisChokeManager, CallLimitExceededError
 from tsp.solver import sample_from_distance_matrix
 
 # unitary:web
 BASIC_AUTH_TOKEN = 'Basic dW5pdGFyeTp3ZWI='
 STATIC_DIRECTORY = os.path.abspath(os.path.join(os.getcwd(), './build'))
 INDEX_HTML = os.path.abspath(os.path.join(STATIC_DIRECTORY, './index.html'))
+REDIS = StrictRedis(
+    host=os.getenv('REDIS_HOST', 'localhost'),
+    port=int(os.getenv('REDIS_PORT', '6379')),
+    password=os.getenv('REDIS_PASSWORD', None))
+
+CHOKE_MANAGER = RedisChokeManager(REDIS)
 
 class AuthMiddleware(object):
 
@@ -32,6 +40,31 @@ if DWAVE_TOKEN is None:
 class TSPResource(object):
     """Resource for computing TSP solution."""
 
+    @staticmethod
+    @CHOKE_MANAGER.choke(
+        window_length=float(os.getenv('CHOKE_WINDOW_LENGTH')),
+        limit=float(os.getenv('CHOKE_LIMIT')))
+    def solve_using_dwave(dist_matrix, dist_mul, const_mul, start, end):
+        """Solve TSP problem using D-Wave."""
+        return sample_from_distance_matrix(
+            dist_matrix,
+            dist_mul,
+            const_mul,
+            start=start,
+            end=end,
+            use_dwave=True,
+            dwave_token=DWAVE_TOKEN)
+
+    @staticmethod
+    def solve_clasically(dist_matrix, dist_mul, const_mul, start, end):
+        """Solve TSP using classical emulator."""
+        return sample_from_distance_matrix(
+            dist_matrix,
+            dist_mul,
+            const_mul,
+            start=start,
+            end=end)
+
     def on_post(self, req, resp):
         """The POST handler."""
         payload = json.load(req.bounded_stream)
@@ -40,15 +73,9 @@ class TSPResource(object):
         end = payload.get('end_node', start)
         use_dwave = payload.get('use_dwave', False)
 
-        if use_dwave:
-            if DWAVE_TOKEN is None:
-                use_dwave = False
-            kwargs = {
-                'use_dwave': use_dwave,
-                'dwave_token': DWAVE_TOKEN
-            }
-        else:
-            kwargs = {}
+        if use_dwave and DWAVE_TOKEN is None: # Terminate early if D-Wave solution requested
+            resp.status_code = 412
+            return
 
         try:
             dist_matrix = numpy.array(payload['distances'], dtype='float64')
@@ -65,9 +92,28 @@ class TSPResource(object):
         dist_mul = payload.get('dist_mul', 10)
         const_mul = payload.get('const_mul', 400)
 
-        result = sample_from_distance_matrix(dist_matrix, dist_mul, const_mul, start=start, end=end, **kwargs)
+        # Flag indicating whether we will need to solve classically.
+        # Obviously is we dont use D-Wave this should be true already.
+        classical_solution_needed = not use_dwave
+
+        if use_dwave:
+            try:
+                result = self.solve_using_dwave(
+                    dist_matrix,
+                    dist_mul,
+                    const_mul,
+                    start=start,
+                    end=end)
+            except CallLimitExceededError:
+                logger = logging.getLogger('tsp.api')
+                logger.warning('Throttling triggered. Classical solution will be returned')
+                classical_solution_needed = True
+
+        if classical_solution_needed:
+            result = self.solve_clasically(dist_matrix, dist_mul, const_mul, start=start, end=end)
+
         resp.content_type = falcon.MEDIA_JSON
-        resp.body =  json.dumps({
+        resp.body = json.dumps({
             'route': result.route,
             'distance': result.mileage,
             'energy': result.energy,
