@@ -95,7 +95,6 @@ def route_from_sample(sample, number_of_locations, start=None, end=None):
             step, location = map_qubit_to_x(qubit, number_of_nodes)
             route[step] = location
     print(route)
-    print(start, end)
     print(adjust_ends_acyclic(route, start, end))
 
     return adjust_ends_acyclic(route, start, end)

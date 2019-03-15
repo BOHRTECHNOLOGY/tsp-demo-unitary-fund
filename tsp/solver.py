@@ -54,9 +54,12 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
 
     if use_dwave:
         try:
+            num_reads = 1000
+            if number_of_locations > 7:
+                num_reads = 2000
             print("Start solving using D-Wave!")
             sampler = EmbeddingComposite(DWaveSampler(token=token, endpoint=DWAVE_ENDPOINT))
-            result = sampler.sample_qubo(qubo, num_reads=1000, chain_strength=const_mul*2)
+            result = sampler.sample_qubo(qubo, num_reads=num_reads, chain_strength=const_mul*2)
             info = {"total_time": result.info['timing']['total_real_time']/10e3,
                 "machine": "DWAVE 2000Q"}
         except Exception as e:
