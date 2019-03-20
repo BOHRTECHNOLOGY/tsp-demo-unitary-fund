@@ -1,8 +1,6 @@
 """Module containing functions for solving TSP using D-Wave's Qbsolv."""
 from collections import namedtuple
 from dwave_qbsolv import QBSolv
-from dwave.system.samplers import DWaveSampler
-from dwave.system.composites import EmbeddingComposite
 import numpy as np
 from tsp.qubo import construct_qubo, route_from_sample
 from tsp.utils import create_distance_matrix, calculate_mileage
@@ -47,10 +45,12 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
     qubo = construct_qubo(dist_matrix, dist_mul, const_mul)
     use_dwave = kwargs.get('use_dwave', False)
     token = kwargs.get('dwave_token', None)
+    solver = kwargs.get('solver', None)
 
     if 'use_dwave' in kwargs:
         del kwargs['use_dwave']
         del kwargs['dwave_token']
+    import gc
 
     if use_dwave:
         try:
@@ -58,8 +58,8 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
             if number_of_locations > 7:
                 num_reads = 2000
             print("Start solving using D-Wave!")
-            sampler = EmbeddingComposite(DWaveSampler(token=token, endpoint=DWAVE_ENDPOINT))
-            result = sampler.sample_qubo(qubo, num_reads=num_reads, chain_strength=const_mul*2)
+            # solver = EmbeddingComposite(DWaveSampler(token=token, endpoint=DWAVE_ENDPOINT))
+            result = solver.sample_qubo(qubo, num_reads=num_reads, chain_strength=const_mul*2)
             info = {"total_time": result.info['timing']['total_real_time']/10e3,
                 "machine": "DWAVE 2000Q"}
         except Exception as e:
@@ -68,7 +68,7 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
             result = QBSolv().sample_qubo(qubo, **kwargs)
             info = {"machine": "local"}
     else:
-        print("Start solving using QBSolve")
+        print("Start solving using QBSolv")
         result = QBSolv().sample_qubo(qubo, **kwargs)
         info = {"machine": "local"}
     print("Got answer!")
@@ -76,4 +76,8 @@ def sample_from_distance_matrix(dist_matrix, dist_mul=1, const_mul=8500, start=N
     mileage = calculate_mileage(dist_matrix * max_distance, route)
     info['mileage'] = mileage
     print("Problem solved!")
-    return TSPSolution(route, result.data_vectors['energy'][0], mileage, info)
+    energy = result.data_vectors['energy'][0]
+    del solver
+    del result
+    gc.collect()
+    return TSPSolution(route, energy, mileage, info)

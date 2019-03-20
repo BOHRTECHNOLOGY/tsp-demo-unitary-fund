@@ -7,6 +7,9 @@ import numpy
 from redis import StrictRedis
 from choke import RedisChokeManager, CallLimitExceededError
 from tsp.solver import sample_from_distance_matrix
+from dwave.system.samplers import DWaveSampler
+from dwave.system.composites import EmbeddingComposite
+import gc
 
 # unitary:web
 BASIC_AUTH_TOKEN = 'Basic dW5pdGFyeTp3ZWI='
@@ -39,12 +42,14 @@ if DWAVE_TOKEN is None:
 
 class TSPResource(object):
     """Resource for computing TSP solution."""
+    def __init__(self):
+        self.solver = EmbeddingComposite(DWaveSampler(token=DWAVE_TOKEN, endpoint=DWAVE_ENDPOINT, solver={'qpu': True}))
 
     @staticmethod
     @CHOKE_MANAGER.choke(
         window_length=float(os.getenv('CHOKE_WINDOW_LENGTH')),
         limit=float(os.getenv('CHOKE_LIMIT')))
-    def solve_using_dwave(dist_matrix, dist_mul, const_mul, start, end):
+    def solve_using_dwave(dist_matrix, dist_mul, const_mul, start, end, solver):
         """Solve TSP problem using D-Wave."""
         return sample_from_distance_matrix(
             dist_matrix,
@@ -53,7 +58,8 @@ class TSPResource(object):
             start=start,
             end=end,
             use_dwave=True,
-            dwave_token=DWAVE_TOKEN)
+            dwave_token=DWAVE_TOKEN,
+            solver=solver)
 
     @staticmethod
     def solve_clasically(dist_matrix, dist_mul, const_mul, start, end):
@@ -102,7 +108,8 @@ class TSPResource(object):
                     dist_mul,
                     const_mul,
                     start=start,
-                    end=end)
+                    end=end,
+                    solver=self.solver)
             except CallLimitExceededError:
                 logger = logging.getLogger('tsp.api')
                 logger.warning('Throttling triggered. Classical solution will be returned')
@@ -121,6 +128,7 @@ class TSPResource(object):
             'energy': result.energy,
             'info': result.info,
         })
+        gc.collect()
 
 # api = falcon.API(middleware=[
 #                      AuthMiddleware()
