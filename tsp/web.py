@@ -100,6 +100,10 @@ class TSPResource(object):
         # Flag indicating whether we will need to solve classically.
         # Obviously is we dont use D-Wave this should be true already.
         classical_solution_needed = not use_dwave
+        import os
+        import psutil
+        process = psutil.Process(os.getpid())
+        print("MEMORY BEFORE:", convert_size(process.memory_info().rss))
 
         if use_dwave:
             try:
@@ -123,6 +127,7 @@ class TSPResource(object):
 
         if classical_solution_needed:
             result = self.solve_clasically(dist_matrix, dist_mul, const_mul, start=start, end=end)
+        print("MEMORY AFTER:", convert_size(process.memory_info().rss))
 
         resp.content_type = falcon.MEDIA_JSON
         resp.body = json.dumps({
@@ -147,3 +152,14 @@ def index_html_sink(req, resp):
 api.add_sink(index_html_sink, prefix='^/$')
 api.add_static_route('/', STATIC_DIRECTORY)
 api.add_route('/tsp/solve', TSPResource())
+
+
+def convert_size(size_bytes):
+    if size_bytes == 0:
+        return "0B"
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)
+    return "%s %s" % (s, size_name[i])
+
