@@ -43,7 +43,7 @@ if DWAVE_TOKEN is None:
 class TSPResource(object):
     """Resource for computing TSP solution."""
     def __init__(self):
-        self.solver = EmbeddingComposite(DWaveSampler(token=DWAVE_TOKEN, endpoint=DWAVE_ENDPOINT, solver={'qpu': True}))
+        self.solver = EmbeddingComposite(DWaveSampler(token=DWAVE_TOKEN, endpoint=DWAVE_ENDPOINT))
 
     @staticmethod
     @CHOKE_MANAGER.choke(
@@ -110,6 +110,9 @@ class TSPResource(object):
                     start=start,
                     end=end,
                     solver=self.solver)
+                if -1 in result.route:
+                    print("D-Wave unable to find proper solution")
+                    classical_solution_needed = True
             except CallLimitExceededError:
                 logger = logging.getLogger('tsp.api')
                 logger.warning('Throttling triggered. Classical solution will be returned')
