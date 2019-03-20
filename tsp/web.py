@@ -10,6 +10,7 @@ from tsp.solver import sample_from_distance_matrix
 from dwave.system.samplers import DWaveSampler
 from dwave.system.composites import EmbeddingComposite
 import gc
+import math
 
 # unitary:web
 BASIC_AUTH_TOKEN = 'Basic dW5pdGFyeTp3ZWI='
