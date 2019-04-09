@@ -3,11 +3,12 @@ import json
 import logging
 import os
 import falcon
-import numpy
+import numpy as np
 from redis import StrictRedis
 from choke import RedisChokeManager, CallLimitExceededError
 from tsp.solver import sample_from_distance_matrix
 from dwave.system.samplers import DWaveSampler
+from dwave.system.composites import FixedEmbeddingComposite
 from dwave.system.composites import EmbeddingComposite
 import gc
 import math
@@ -44,7 +45,17 @@ if DWAVE_TOKEN is None:
 class TSPResource(object):
     """Resource for computing TSP solution."""
     def __init__(self):
-        self.solver = EmbeddingComposite(DWaveSampler(token=DWAVE_TOKEN, endpoint=DWAVE_ENDPOINT))
+        self.solvers_list = {}
+        sampler = DWaveSampler(token=DWAVE_TOKEN, endpoint=DWAVE_ENDPOINT)
+        for i in range(4, 10):
+            embedding = np.load(os.path.join('embeddings', 'embedding_' + str(i) + '.npy')).item()
+            for key in embedding.keys():
+                embedding[key] = [int(item) for item in embedding[key]]
+            try:
+                self.solvers_list[i] = FixedEmbeddingComposite(sampler, embedding=embedding)
+            except Exception as e:
+                pass
+        self.backup_solver = EmbeddingComposite(sampler)
 
     @staticmethod
     @CHOKE_MANAGER.choke(
@@ -83,8 +94,9 @@ class TSPResource(object):
         if use_dwave and DWAVE_TOKEN is None: # Terminate early if D-Wave solution requested
             use_dwave = False
 
+
         try:
-            dist_matrix = numpy.array(payload['distances'], dtype='float64')
+            dist_matrix = np.array(payload['distances'], dtype='float64')
         except KeyError:
             msg = 'The "distances" matrix is absent from the request.'
             raise falcon.HTTPBadRequest('Bad request', msg)
@@ -108,20 +120,26 @@ class TSPResource(object):
 
         if use_dwave:
             try:
+                try:
+                    solver = self.solvers_list[int(dist_matrix.shape[0])]
+                except Exception as e:
+                    print(e)
+                    print("Problem with solver, using backup solver")
+                    solver = self.backup_solver
                 result = self.solve_using_dwave(
                     dist_matrix,
                     dist_mul,
                     const_mul,
                     start=start,
                     end=end,
-                    solver=self.solver)
+                    solver=solver)
                 if -1 in result.route:
                     print("D-Wave unable to find proper solution")
                     classical_solution_needed = True
             except CallLimitExceededError:
                 logger = logging.getLogger('tsp.api')
                 logger.warning('Throttling triggered. Classical solution will be returned')
-                classical_solution_needed = True
+                classical_solution_needed = True                
             except Exception as e:
                 print("Unexpected error:", e)
                 classical_solution_needed = True
