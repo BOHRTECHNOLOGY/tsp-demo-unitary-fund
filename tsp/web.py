@@ -35,6 +35,7 @@ class AuthMiddleware(object):
 
 
 logging.basicConfig(level='WARNING')
+logging.getLogger('redis_choke').setLevel('DEBUG')
 
 DWAVE_ENDPOINT = 'https://cloud.dwavesys.com/sapi'
 DWAVE_TOKEN = os.getenv('DWAVE_TOKEN', None)
