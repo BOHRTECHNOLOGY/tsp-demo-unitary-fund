@@ -1,6 +1,6 @@
 certifi==2019.3.9
 chardet==3.0.4
-choke==0.1.0
+choke==0.1.1
 Click==7.0
 decorator==4.4.0
 dimod==0.7.9
