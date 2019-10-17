@@ -14,8 +14,13 @@ import './Map.css';
 const InProgressOverlay = () => (
     <div className="DemoInProgressOverlay">
         Finding solution using a <a href="https://www.dwavesys.com" target="_blank" rel="noopener noreferrer">quantum computer</a>
-
     </div>
+);
+
+const ErrorOverlay = () => (
+  <div className="DemoInProgressOverlay">
+      Something went wrong. Please refresh the page and try again.
+  </div>
 );
 
 const shapeOfPoint = PropTypes.shape({
@@ -30,6 +35,7 @@ class Map extends Component {
         findingSolutionInProgress: PropTypes.bool,
         solutionRoute: PropTypes.arrayOf(shapeOfPoint),
         togglePoint: PropTypes.func.isRequired,
+        error: PropTypes.bool.isRequired,
     };
 
     static defaultProps = {
@@ -51,7 +57,8 @@ class Map extends Component {
         map.setOptions({clickableIcons: false})
     }
 
-    componentWillReceiveProps(newProps, oldProps) {
+    componentDidUpdate(oldProps) {
+        const newProps = this.props;
         const oldSolutionRoute = oldProps.solutionRoute && oldProps.solutionRoute.map(({lat, lng}) => lat + '' + lng).join('');
         const solutionRoute = newProps.solutionRoute && newProps.solutionRoute.map(({lat, lng}) => lat + '' + lng).join('');
         if (solutionRoute !== oldSolutionRoute) {
@@ -80,6 +87,7 @@ class Map extends Component {
         return (
             <div className="DemoMap">
                 {this.props.findingSolutionInProgress && <InProgressOverlay/>}
+                {this.props.error && <ErrorOverlay/>}
                 <GoogleMapReact
                     bootstrapURLKeys={{key: GOOGLE_MAPS_API_KEY}}
                     defaultCenter={this.props.center}
@@ -106,6 +114,7 @@ const mapStateToProps = (state) => ({
     pointsList: getPointsList(state.map),
     solutionRoute: getSolutionRoute(state.map),
     findingSolutionInProgress: state.map.findingSolutionInProgress,
+    error: state.map.error,
 });
 
 const mapDispatchToProps = (dispatch) => ({
