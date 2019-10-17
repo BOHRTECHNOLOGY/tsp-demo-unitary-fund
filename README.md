@@ -25,7 +25,7 @@
 * To view the password and modify it go to `tsp/web.py` 
 
 ## Important Notes:
-* To change google API KEY go to `src/config/config.js`
+* To change google API KEY modify the `REACT_APP_GOOGLE_MAP_API_KEY` environment variable
 * To modify landing page contents go to `public/index.html`
 * To modify the demo app go to `src/index.js`
 * To modify the python API go to `tsp/web.py`

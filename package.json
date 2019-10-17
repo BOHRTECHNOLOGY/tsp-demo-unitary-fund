@@ -20,13 +20,21 @@
     "heroku-postbuild": "npm run build"
   },
   "devDependencies": {},
-  "proxy": {
-    "/tsp/*": {
-      "target": "http://localhost:5000"
-    }
-  },
+  "proxy": "http://localhost:5000",
   "engines": {
     "npm": "5.6.0",
     "node": "8.9.4"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
