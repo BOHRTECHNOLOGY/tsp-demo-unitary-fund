@@ -57,7 +57,8 @@ class Map extends Component {
         map.setOptions({clickableIcons: false})
     }
 
-    componentWillReceiveProps(newProps, oldProps) {
+    componentDidUpdate(oldProps) {
+        const newProps = this.props;
         const oldSolutionRoute = oldProps.solutionRoute && oldProps.solutionRoute.map(({lat, lng}) => lat + '' + lng).join('');
         const solutionRoute = newProps.solutionRoute && newProps.solutionRoute.map(({lat, lng}) => lat + '' + lng).join('');
         if (solutionRoute !== oldSolutionRoute) {
