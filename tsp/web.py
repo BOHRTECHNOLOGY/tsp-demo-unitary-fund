@@ -23,6 +23,7 @@ REDIS = StrictRedis(
     password=os.getenv('REDIS_PASSWORD', None))
 
 CHOKE_MANAGER = RedisChokeManager(REDIS)
+LOGGER_NAME = 'tsp.api'
 
 class AuthMiddleware(object):
 
@@ -34,12 +35,13 @@ class AuthMiddleware(object):
 
 
 logging.basicConfig(level='WARNING')
+logging.getLogger('redis_choke').setLevel('DEBUG')
 
 DWAVE_ENDPOINT = 'https://cloud.dwavesys.com/sapi'
 DWAVE_TOKEN = os.getenv('DWAVE_TOKEN', None)
 
 if DWAVE_TOKEN is None:
-    logging.getLogger('tsp.api').warning('D-Wave token not configured. Only local requests will be supported.')
+    logging.getLogger(LOGGER_NAME).warning('D-Wave token not configured. Only local requests will be supported.')
 
 
 class TSPResource(object):
@@ -63,6 +65,10 @@ class TSPResource(object):
         limit=float(os.getenv('CHOKE_LIMIT')))
     def solve_using_dwave(dist_matrix, dist_mul, const_mul, start, end, solver):
         """Solve TSP problem using D-Wave."""
+        logging.getLogger(LOGGER_NAME).info(
+            'Calling sample_from_distance_matrix with args: '
+            '%s %s %s %s %s %s %s %s',
+            dist_matrix, dist_mul, const_mul, start, end, True, solver, DWAVE_TOKEN)
         return sample_from_distance_matrix(
             dist_matrix,
             dist_mul,
@@ -139,7 +145,7 @@ class TSPResource(object):
             except CallLimitExceededError:
                 logger = logging.getLogger('tsp.api')
                 logger.warning('Throttling triggered. Classical solution will be returned')
-                classical_solution_needed = True                
+                classical_solution_needed = True
             except Exception as e:
                 print("Unexpected error:", e)
                 classical_solution_needed = True
@@ -181,4 +187,3 @@ def convert_size(size_bytes):
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)
     return "%s %s" % (s, size_name[i])
-
