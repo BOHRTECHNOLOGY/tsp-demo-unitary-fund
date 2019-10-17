@@ -14,6 +14,7 @@ export const defaultState = {
     selected: [],
     findingSolutionInProgress: false,
     solution: null,
+    error: false,
 };
 
 const mapReducer = (state = defaultState, action) => {
@@ -44,6 +45,7 @@ const mapReducer = (state = defaultState, action) => {
                 ...state,
                 findingSolutionInProgress: true,
                 solution: null,
+                error: false,
             };
 
         case MAP_ACTION_TYPES.COMPUTE_SUCCESS:
@@ -52,6 +54,13 @@ const mapReducer = (state = defaultState, action) => {
                 findingSolutionInProgress: false,
                 solution: action.solution,
                 info: action.info,
+            };
+
+        case MAP_ACTION_TYPES.COMPUTE_ERROR:
+            return {
+                ...state,
+                findingSolutionInProgress: false,
+                error: true,
             };
 
         case MAP_ACTION_TYPES.CHOOSE_RANDOM:
